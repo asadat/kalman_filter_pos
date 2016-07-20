@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "robot.h"
+#include <map>
 
 class engine
 {
@@ -20,6 +21,8 @@ public:
     void initialize();
     void draw();
 
+    void mouse_click(const int &x, const int &y);
+    void keyboard_event(std::map<unsigned char, bool>& keys_pressed);
 private:
 
     engine();

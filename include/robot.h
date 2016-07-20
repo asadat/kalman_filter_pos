@@ -14,7 +14,9 @@ public:
     Eigen::Vector2f get_p();
     Eigen::Vector2f get_v();
 
+    void set_goal(const float &x, const float &y);
     void stop();
+    void change_vel(bool l, bool r, bool u, bool d);
 
 private:
 
@@ -29,8 +31,12 @@ private:
 
     Eigen::Vector2f p_;
     Eigen::Vector2f v_;
+    float speed_;
 
     bool stop_;
+
+    const float speed_rate_;
+    const float dir_rate_;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
