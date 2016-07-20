@@ -9,8 +9,11 @@ set(source
     src/main.cpp
     src/robot.cpp
     src/engine.cpp
+    src/odometry.cpp
+    include/odometry.h
     include/engine.h
-    include/robot.h)
+    include/robot.h
+    include/utility.h)
 
 set(libraries GL GLU glut)
 

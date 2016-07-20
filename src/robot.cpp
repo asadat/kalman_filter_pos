@@ -1,24 +1,28 @@
-#include <robot.h>
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <GL/glut.h>
+
+#include "robot.h"
+#include "utility.h"
 
 using namespace std;
 using namespace Eigen;
 
-robot::robot(): p_(-10,-10),
+robot::robot():
+    p_(-10,-10),
     v_(1,0),
     speed_(1),
     stop_(false),
     speed_rate_(0.01),
-    dir_rate_(0.01)
+    dir_rate_(0.01),
+    odom(Vector2f(-10,-10))
 {
 
 }
 
 robot::~robot()
 {
-
 }
 
 Vector2f robot::get_p()
@@ -31,11 +35,6 @@ Vector2f robot::get_v()
 {
     lock_guard<mutex> lck(state_mutex_);
     return v_;
-}
-
-void robot::set_goal(const float &x, const float &y)
-{
-    set_v((Vector2f(x,y)-get_p()).normalized());
 }
 
 void robot::set_p(const Vector2f & p)
@@ -70,14 +69,23 @@ void robot::stop()
 
 void robot::update_state(const float &dt)
 {
-    //std::cout << "dt: " << dt << std::endl;
-
     auto p = get_p();
     auto v = get_v();
 
-    p += dt*speed_*v;
+    float deg_noise = utility::generate_normal_sample(0, 0.3);
+    Matrix2f noisey_dir;
+    noisey_dir << cos(deg_noise), sin(deg_noise), -sin(deg_noise), cos(deg_noise);
+
+    float noise_speed = utility::generate_normal_sample(0, 0.5);
+
+    auto noisy_v = noisey_dir*v;
+    auto noisy_speed = speed_ + noise_speed;
+
+    p += dt*noisy_speed*noisy_v;
 
     set_p(p);
+
+    odom.velocity_action(speed_*v, dt);
 }
 
 void robot::update()
@@ -98,8 +106,6 @@ void robot::update()
 
 void robot::change_vel(bool l, bool r, bool u, bool d)
 {
-    //std::cout << " " << l << " " << r << " " << u << " " << d << std::endl;
-
     float ddir=0;
     if(u) speed_+=speed_rate_;
     if(d) speed_-=speed_rate_;
@@ -114,5 +120,16 @@ void robot::change_vel(bool l, bool r, bool u, bool d)
         v = rot*v;
         set_v(v);
     }
+}
 
+void robot::draw()
+{
+    glColor3f(0,0,1);
+    glPointSize(3);
+    glBegin(GL_POINTS);
+    glVertex2f(p_[0], p_[1]);
+    glEnd();
+
+
+    odom.draw();
 }

@@ -23,7 +23,8 @@ void idle_event()
     glutPostRedisplay();
 }
 
-void mouse_event(int button, int state, int x, int y) {
+void mouse_event(int button, int state, int x, int y)
+{
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         engine::get_instance()->mouse_click(x,y);
@@ -69,20 +70,16 @@ int main(int argc, char ** argv)
     glutInit(&argc, argv);
     glutInitWindowSize(800, 600);
     glutInitDisplayMode(GLUT_RGBA | GLUT_ALPHA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutCreateWindow("active_survey_visualization");
+    glutCreateWindow("kalman_filter_pos");
     glClearColor(1,1,1,0);
     glEnable(GL_POINT_SMOOTH);
 
-    // register callbacks
     glutDisplayFunc(render);
-    //glutReshapeFunc(resize_event);
     glutKeyboardFunc(keyboard_event);
     glutKeyboardUpFunc(keyboard_up_event);
     glutMouseFunc(mouse_event);
     glutTimerFunc(33, update_event, 33);
     glutIdleFunc(idle_event);
-    //glutMotionFunc(mouse_drag_event);
-    //glutPassiveMotionFunc(mouse_move_event);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -90,9 +87,6 @@ int main(int argc, char ** argv)
 
 
     glutIgnoreKeyRepeat(true);
-
-    //translateCamera(0, 0, 50);
-    //rotateCamera(0,-1.57,0);
 
     glutMainLoop();
 
